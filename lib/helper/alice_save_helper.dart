@@ -24,6 +24,18 @@ class AliceSaveHelper {
     _checkPermissions(context, calls);
   }
 
+  /// Top level method used to save calls to file
+  static Future<String> getCalls(
+    BuildContext context,
+    List<AliceHttpCall> calls,
+  ) async {
+    var result = await _buildAliceLog();
+    calls.forEach((AliceHttpCall call) {
+      result += _buildCallLog(call);
+    });
+    return result;
+  }
+
   static Future<bool> _getPermissionStatus() async {
     if (Platform.isAndroid || Platform.isIOS) {
       return Permission.storage.status.isGranted;

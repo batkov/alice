@@ -3,12 +3,9 @@ import 'dart:io';
 
 import 'package:alice/alice.dart';
 import 'package:alice/core/alice_http_client_extensions.dart';
-import 'package:alice/core/alice_http_extensions.dart';
-import 'package:alice_example/posts_service.dart';
 import 'package:chopper/chopper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 void main() => runApp(MyApp());
@@ -23,7 +20,6 @@ class _MyAppState extends State<MyApp> {
   late Dio _dio;
   late HttpClient _httpClient;
   ChopperClient? _chopper;
-  late PostsService _postsService;
   Color _primaryColor = Color(0xffff5e57);
   Color _accentColor = Color(0xffff3f34);
   Color _buttonColor = Color(0xff008000);
@@ -39,11 +35,6 @@ class _MyAppState extends State<MyApp> {
       followRedirects: false,
     ));
     _dio.interceptors.add(_alice.getDioInterceptor());
-    _httpClient = HttpClient();
-    _chopper = ChopperClient(
-      interceptors: [_alice.getChopperInterceptor()],
-    );
-    _postsService = PostsService.create(_chopper);
 
     super.initState();
   }
@@ -77,20 +68,8 @@ class _MyAppState extends State<MyApp> {
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                child: Text('Run http/http HTTP Requests'),
-                onPressed: _runHttpHttpRequests,
-                style: _buttonStyle,
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
                 child: Text('Run HttpClient Requests'),
                 onPressed: _runHttpHttpClientRequests,
-                style: _buttonStyle,
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                child: Text('Run Chopper HTTP Requests'),
-                onPressed: _runChopperHttpRequests,
                 style: _buttonStyle,
               ),
               const SizedBox(height: 8),
@@ -163,18 +142,6 @@ class _MyAppState extends State<MyApp> {
     _alice.addLogs(logs);
   }
 
-  void _runChopperHttpRequests() async {
-    String body = jsonEncode(
-        <String, dynamic>{'title': 'foo', 'body': 'bar', 'userId': '1'});
-    _postsService.getPost('1');
-    _postsService.postPost(body);
-    _postsService.putPost('1', body);
-    _postsService.putPost('1231923', body);
-    _postsService.putPost('1', null);
-    _postsService.postPost(null);
-    _postsService.getPost('123456');
-  }
-
   void _runDioRequests() async {
     Map<String, dynamic> body = <String, dynamic>{
       'title': 'foo',
@@ -222,100 +189,6 @@ class _MyAppState extends State<MyApp> {
         data: formData);
 
     _dio.get<void>('http://dummy.restapiexample.com/api/v1/employees');
-  }
-
-  void _runHttpHttpRequests() async {
-    Map<String, String> body = <String, String>{
-      'title': 'foo',
-      'body': 'bar',
-      'userId': '1'
-    };
-    http
-        .post(Uri.tryParse('https://jsonplaceholder.typicode.com/posts')!,
-            body: body)
-        .interceptWithAlice(_alice, body: body);
-
-    http
-        .get(Uri.tryParse('https://jsonplaceholder.typicode.com/posts')!)
-        .interceptWithAlice(_alice);
-
-    http
-        .put(Uri.tryParse('https://jsonplaceholder.typicode.com/posts/1')!,
-            body: body)
-        .interceptWithAlice(_alice, body: body);
-
-    http
-        .patch(Uri.tryParse('https://jsonplaceholder.typicode.com/posts/1')!,
-            body: body)
-        .interceptWithAlice(_alice, body: body);
-
-    http
-        .delete(Uri.tryParse('https://jsonplaceholder.typicode.com/posts/1')!)
-        .interceptWithAlice(_alice, body: body);
-
-    http
-        .get(Uri.tryParse('https://jsonplaceholder.typicode.com/test/test')!)
-        .interceptWithAlice(_alice);
-
-    http
-        .post(Uri.tryParse('https://jsonplaceholder.typicode.com/posts')!,
-            body: body)
-        .then((response) {
-      _alice.onHttpResponse(response, body: body);
-    });
-
-    http
-        .get(Uri.tryParse('https://jsonplaceholder.typicode.com/posts')!)
-        .then((response) {
-      _alice.onHttpResponse(response);
-    });
-
-    http
-        .put(Uri.tryParse('https://jsonplaceholder.typicode.com/posts/1')!,
-            body: body)
-        .then((response) {
-      _alice.onHttpResponse(response, body: body);
-    });
-
-    http
-        .patch(Uri.tryParse('https://jsonplaceholder.typicode.com/posts/1')!,
-            body: body)
-        .then((response) {
-      _alice.onHttpResponse(response, body: body);
-    });
-
-    http
-        .delete(Uri.tryParse('https://jsonplaceholder.typicode.com/posts/1')!)
-        .then((response) {
-      _alice.onHttpResponse(response);
-    });
-
-    http
-        .get(Uri.tryParse('https://jsonplaceholder.typicode.com/test/test')!)
-        .then((response) {
-      _alice.onHttpResponse(response);
-    });
-
-    http
-        .post(
-            Uri.tryParse(
-                'https://jsonplaceholder.typicode.com/posts?key1=value1')!,
-            body: body)
-        .interceptWithAlice(_alice, body: body);
-
-    http
-        .post(
-            Uri.tryParse(
-                'https://jsonplaceholder.typicode.com/posts?key1=value1&key2=value2&key3=value3')!,
-            body: body)
-        .interceptWithAlice(_alice, body: body);
-
-    http
-        .get(Uri.tryParse(
-            'https://jsonplaceholder.typicode.com/test/test?key1=value1&key2=value2&key3=value3')!)
-        .then((response) {
-      _alice.onHttpResponse(response);
-    });
   }
 
   void _runHttpHttpClientRequests() {

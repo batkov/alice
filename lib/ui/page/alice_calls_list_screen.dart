@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:alice/core/alice_core.dart';
 import 'package:alice/core/alice_logger.dart';
 import 'package:alice/helper/alice_alert_helper.dart';
@@ -14,6 +16,7 @@ import 'package:alice/utils/alice_constants.dart';
 import 'package:alice/utils/alice_scroll_behavior.dart';
 import 'package:alice/utils/alice_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AliceCallsListScreen extends StatefulWidget {
   final AliceCore _aliceCore;
@@ -51,6 +54,7 @@ class _AliceCallsListScreenState extends State<AliceCallsListScreen>
       AliceMenuItem('Delete', Icons.delete),
       AliceMenuItem('Stats', Icons.insert_chart),
       AliceMenuItem('Save', Icons.save),
+      AliceMenuItem('Share as file', Icons.share),
     ]);
   }
 
@@ -275,6 +279,9 @@ class _AliceCallsListScreenState extends State<AliceCallsListScreen>
     if (menuItem.title == 'Save') {
       _saveToFile();
     }
+    if (menuItem.title == 'Share as file') {
+      _shareAsFile();
+    }
   }
 
   Widget _buildCallsListWrapper() {
@@ -458,6 +465,21 @@ class _AliceCallsListScreenState extends State<AliceCallsListScreen>
 
   Future<void> _saveToFile() async {
     aliceCore.saveHttpRequests(context);
+  }
+
+  Future<void> _shareAsFile() async {
+    final toShare = await aliceCore.getAllHttpRequests(context);
+    final bytes = Uint8List.fromList(toShare.codeUnits);
+    final time = DateTime.now().toString();
+    final file = XFile.fromData(
+      bytes,
+      name: 'alice_$time.log',
+      mimeType: 'text/plain',
+    );
+    await Share.shareXFiles(
+      [file],
+      subject: 'Share Alice log $time',
+    );
   }
 
   void _updateSearchQuery(String query) {

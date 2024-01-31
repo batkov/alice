@@ -310,6 +310,11 @@ class AliceCore {
     AliceSaveHelper.saveCalls(context, callsSubject.value);
   }
 
+  /// Save all calls to file
+  Future<String> getAllHttpRequests(BuildContext context) async {
+    return AliceSaveHelper.getCalls(context, callsSubject.value);
+  }
+
   /// Adds new log to Alice logger.
   void addLog(AliceLog log) {
     _aliceLogger.logs.add(log);
