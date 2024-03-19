@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:alice/core/alice_core.dart';
@@ -469,7 +470,7 @@ class _AliceCallsListScreenState extends State<AliceCallsListScreen>
 
   Future<void> _shareAsFile() async {
     final toShare = await aliceCore.getAllHttpRequests(context);
-    final bytes = Uint8List.fromList(toShare.codeUnits);
+    final bytes = const Utf8Encoder().convert(toShare);
     final time = DateTime.now().toString();
     final file = XFile.fromData(
       bytes,
