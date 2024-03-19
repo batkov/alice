@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:alice/alice.dart';
 import 'package:alice/core/alice_http_client_extensions.dart';
-import 'package:chopper/chopper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,7 +18,6 @@ class _MyAppState extends State<MyApp> {
   late Alice _alice;
   late Dio _dio;
   late HttpClient _httpClient;
-  ChopperClient? _chopper;
   Color _primaryColor = Color(0xffff5e57);
   Color _accentColor = Color(0xffff3f34);
   Color _buttonColor = Color(0xff008000);
