@@ -18,10 +18,10 @@ dependencies:
 
   path_provider: ^2.0.15
   permission_handler: ^11.2.0
-  package_info_plus: ^6.0.0
+  package_info_plus: ^8.0.0
   open_filex: ^4.3.2
   sensors_plus: ^5.0.0
-  share_plus: ^8.0.2
+  share_plus: ^9.0.0
   # chopper: ^7.0.9
   collection: ^1.17.1
   url_launcher: ^6.2.5
